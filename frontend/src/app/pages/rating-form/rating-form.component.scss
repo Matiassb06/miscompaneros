@@ -1,0 +1,32 @@
+.rating-form {
+  border: 2px solid rgba(108,99,255,.2);
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+    color: var(--secondary);
+  }
+}
+
+.stars-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .stars-hint {
+    font-size: .82rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+}
+
+.required { color: var(--accent); }
+
+.char-count {
+  font-size: .75rem;
+  color: var(--text-secondary);
+  display: block;
+  text-align: right;
+  margin-top: .2rem;
+}

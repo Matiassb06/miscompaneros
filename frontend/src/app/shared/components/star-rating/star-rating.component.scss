@@ -1,0 +1,18 @@
+.stars {
+  display: inline-flex;
+  gap: 2px;
+
+  &--sm .star { font-size: 1.1rem; }
+  &--md .star { font-size: 1.4rem; }
+  &--lg .star { font-size: 1.8rem; }
+
+  &--interactive .star { cursor: pointer; transition: transform .1s; }
+  &--interactive .star:hover { transform: scale(1.15); }
+}
+
+.star {
+  color: var(--border);
+  transition: color .15s;
+
+  &.filled { color: var(--star-color); }
+}

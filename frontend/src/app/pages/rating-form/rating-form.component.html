@@ -1,0 +1,42 @@
+<div class="rating-form card">
+  <h3>Deja tu calificación</h3>
+
+  <div class="alert alert-error"   *ngIf="error">{{ error }}</div>
+  <div class="alert alert-success" *ngIf="success">{{ success }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!success">
+
+    <div class="form-group">
+      <label>Puntuación <span class="required">*</span></label>
+      <div class="stars-picker">
+        <app-star-rating
+          [value]="form.value.puntuacion ?? 0"
+          (valueChange)="setStars($event)"
+          size="lg"
+        ></app-star-rating>
+        <span class="stars-hint" *ngIf="(form.value.puntuacion ?? 0) === 0">Haz clic en una estrella</span>
+      </div>
+      <span class="error-msg" *ngIf="form.controls['puntuacion'].invalid && form.controls['puntuacion'].touched">
+        Selecciona una puntuación.
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label>Comentario (opcional)</label>
+      <textarea
+        formControlName="comentario"
+        placeholder="Describe tu experiencia con este compa..."
+        rows="4"
+      ></textarea>
+      <span class="char-count">{{ (form.value.comentario?.length ?? 0) }} / 500</span>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="form.invalid || submitting"
+    >
+      {{ submitting ? 'Publicando...' : 'Publicar reseña' }}
+    </button>
+  </form>
+</div>

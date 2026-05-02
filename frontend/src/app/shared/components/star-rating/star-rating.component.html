@@ -1,0 +1,10 @@
+<div class="stars" [class]="'stars--' + size" [class.stars--interactive]="!readonly"
+     (mouseleave)="leave()">
+  <span
+    *ngFor="let s of stars"
+    class="star"
+    [class.filled]="s <= display"
+    (mouseenter)="hover(s)"
+    (click)="select(s)"
+  >★</span>
+</div>

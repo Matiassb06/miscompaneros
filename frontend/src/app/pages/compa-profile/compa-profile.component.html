@@ -1,0 +1,79 @@
+<div class="container profile-page">
+
+  <div class="loading-wrap" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+
+  <ng-container *ngIf="compa && !loading">
+    <!-- Header del perfil -->
+    <div class="profile-header card">
+      <div class="profile-avatar" [style.background]="'hsl(' + (compa.id * 57) + ',55%,55%)'">
+        <img *ngIf="compa.foto_url" [src]="compa.foto_url" [alt]="compa.nombre">
+        <span *ngIf="!compa.foto_url">{{ compa.nombre[0] }}{{ compa.apellido[0] }}</span>
+      </div>
+
+      <div class="profile-info">
+        <h1>{{ compa.nombre }} {{ compa.apellido }}</h1>
+        <div class="profile-tags">
+          <span class="tag tag-univ" *ngIf="compa.universidad">🏛️ {{ compa.universidad }}</span>
+          <span class="tag tag-carrera" *ngIf="compa.carrera">📚 {{ compa.carrera }}</span>
+          <span class="tag tag-ciclo" *ngIf="compa.ciclo">📅 {{ compa.ciclo }}</span>
+        </div>
+        <p class="descripcion" *ngIf="compa.descripcion">{{ compa.descripcion }}</p>
+
+        <div class="rating-summary">
+          <app-star-rating [value]="compa.promedio ?? 0" [readonly]="true" size="lg"></app-star-rating>
+          <div class="rating-numbers">
+            <span class="rating-score" *ngIf="compa.promedio; else sinProm">
+              {{ compa.promedio | number:'1.1-1' }}
+            </span>
+            <ng-template #sinProm><span class="sin-calif">Sin calificar</span></ng-template>
+            <span class="rating-total">{{ compa.total_calificaciones }} reseña{{ compa.total_calificaciones !== 1 ? 's' : '' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn btn-primary" (click)="showForm = !showForm">
+          {{ showForm ? 'Cancelar' : '✏️ Calificar' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulario de calificación -->
+    <app-rating-form
+      *ngIf="showForm && compa"
+      [compaId]="compa.id"
+      (resenaCreada)="onResenaCreada()"
+    ></app-rating-form>
+
+    <!-- Sección de reseñas -->
+    <div class="resenas-section">
+      <h2 class="section-title">
+        Reseñas <span class="badge">{{ resenas.length }}</span>
+      </h2>
+
+      <div class="empty-resenas" *ngIf="resenas.length === 0">
+        <span>💬</span>
+        <p>Aún no hay reseñas. ¡Sé el primero en calificar!</p>
+      </div>
+
+      <div class="resena-card card" *ngFor="let r of resenas">
+        <div class="resena-header">
+          <div class="resena-user">
+            <div class="user-avatar">A</div>
+            <span class="user-name">Anónimo</span>
+          </div>
+          <div class="resena-meta">
+            <app-star-rating [value]="r.puntuacion" [readonly]="true" size="sm"></app-star-rating>
+            <span class="resena-date">{{ r.created_at | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+        <p class="resena-texto" *ngIf="r.comentario">{{ r.comentario }}</p>
+      </div>
+    </div>
+  </ng-container>
+
+</div>

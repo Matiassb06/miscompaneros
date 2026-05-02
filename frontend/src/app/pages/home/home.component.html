@@ -1,0 +1,155 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>¡Busca y califica a tus compas!</h1>
+    <p class="subtitle">Evalúa a tus compañeros de clase o trabajo, o revisa sus calificaciones antes de elegir grupo.</p>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'universidades'" (click)="setTab('universidades')">
+        🏛️ UNIVERSIDADES
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'compas'" (click)="setTab('compas')">
+        🔍 COMPAÑEROS
+      </button>
+    </div>
+
+    <!-- Search box (tab compas) -->
+    <div class="search-box" *ngIf="activeTab === 'compas'">
+      <input
+        type="text"
+        [formControl]="searchCtrl"
+        placeholder="Escribe un nombre o apellido..."
+        class="search-input"
+        autocomplete="off"
+      />
+      <span class="search-spinner" *ngIf="loading"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============  UNIVERSIDADES TAB  ============ -->
+<div class="container tab-body" *ngIf="activeTab === 'universidades'">
+
+  <!-- Lista de universidades -->
+  <ng-container *ngIf="!selectedUniv">
+    <div class="section-header">
+      <h2>Universidades registradas</h2>
+      <a routerLink="/agregar" class="btn btn-primary btn-sm">+ Agregar compañero</a>
+    </div>
+
+    <div class="loading-wrap" *ngIf="loadingUnivs">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="univ-grid" *ngIf="!loadingUnivs && universidades.length > 0">
+      <div class="univ-card" *ngFor="let u of universidades" (click)="selectUniversidad(u.universidad)">
+        <div class="univ-initial">{{ initials(u.universidad) }}</div>
+        <div class="univ-info">
+          <span class="univ-nombre">{{ u.universidad }}</span>
+          <span class="univ-count">{{ u.total_compas }} compañero{{ u.total_compas !== 1 ? 's' : '' }}</span>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="!loadingUnivs && universidades.length === 0">
+      <div class="empty-icon">🏛️</div>
+      <p>Aún no hay universidades registradas.</p>
+      <a routerLink="/agregar" class="btn btn-primary" style="margin-top:1rem">Agregar el primer compañero</a>
+    </div>
+  </ng-container>
+
+  <!-- Compas de la universidad seleccionada -->
+  <ng-container *ngIf="selectedUniv">
+    <div class="section-header">
+      <button class="btn-back" (click)="backToUnivs()">← Volver</button>
+      <h2>{{ selectedUniv }}</h2>
+    </div>
+
+    <div class="loading-wrap" *ngIf="loadingByUniv">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="results-grid" *ngIf="!loadingByUniv && compasByUniv.length > 0">
+      <div class="compa-card" *ngFor="let c of compasByUniv" (click)="go(c.id)">
+        <div class="avatar" [style.background]="'hsl(' + (c.id * 57) + ',55%,55%)'">
+          <img *ngIf="c.foto_url" [src]="c.foto_url" [alt]="c.nombre">
+          <span *ngIf="!c.foto_url">{{ c.nombre[0] }}{{ c.apellido[0] }}</span>
+        </div>
+        <div class="card-body">
+          <h3>{{ c.nombre }} {{ c.apellido }}</h3>
+          <p class="card-meta" *ngIf="c.carrera">{{ c.carrera }}<span *ngIf="c.ciclo"> · {{ c.ciclo }}</span></p>
+          <app-star-rating [value]="c.promedio ?? 0" [readonly]="true" size="sm"></app-star-rating>
+          <p class="meta">
+            <span *ngIf="c.promedio; else sinCalif2">{{ c.promedio | number:'1.1-1' }} / 5</span>
+            <ng-template #sinCalif2><span class="no-rating">Sin calificar</span></ng-template>
+            &nbsp;·&nbsp; {{ c.total_calificaciones }} reseña{{ c.total_calificaciones !== 1 ? 's' : '' }}
+          </p>
+        </div>
+        <span class="arrow">›</span>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="!loadingByUniv && compasByUniv.length === 0">
+      <div class="empty-icon">🔎</div>
+      <p>No hay compañeros registrados en esta universidad.</p>
+    </div>
+  </ng-container>
+</div>
+
+<!-- ============  COMPAÑEROS TAB  ============ -->
+<div class="container tab-body" *ngIf="activeTab === 'compas'">
+
+  <div class="section-header">
+    <h2 *ngIf="!searched">Busca a tu compañero</h2>
+    <h2 *ngIf="searched">{{ results.length }} resultado{{ results.length !== 1 ? 's' : '' }}</h2>
+    <a routerLink="/agregar" class="btn btn-primary btn-sm">+ Agregar compañero</a>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+
+  <div class="results-grid" *ngIf="results.length > 0">
+    <div class="compa-card" *ngFor="let c of results" (click)="go(c.id)">
+      <div class="avatar" [style.background]="'hsl(' + (c.id * 57) + ',55%,55%)'">
+        <img *ngIf="c.foto_url" [src]="c.foto_url" [alt]="c.nombre">
+        <span *ngIf="!c.foto_url">{{ c.nombre[0] }}{{ c.apellido[0] }}</span>
+      </div>
+      <div class="card-body">
+        <h3>{{ c.nombre }} {{ c.apellido }}</h3>
+        <p class="card-meta" *ngIf="c.universidad">{{ c.universidad }}<span *ngIf="c.carrera"> · {{ c.carrera }}</span></p>
+        <app-star-rating [value]="c.promedio ?? 0" [readonly]="true" size="sm"></app-star-rating>
+        <p class="meta">
+          <span *ngIf="c.promedio; else sinCalif">{{ c.promedio | number:'1.1-1' }} / 5</span>
+          <ng-template #sinCalif><span class="no-rating">Sin calificar</span></ng-template>
+          &nbsp;·&nbsp; {{ c.total_calificaciones }} reseña{{ c.total_calificaciones !== 1 ? 's' : '' }}
+        </p>
+      </div>
+      <span class="arrow">›</span>
+    </div>
+  </div>
+
+  <div class="empty" *ngIf="searched && results.length === 0 && !error">
+    <div class="empty-icon">🔎</div>
+    <p>No encontramos compas con ese nombre.</p>
+  </div>
+
+  <div class="how-it-works-inline" *ngIf="!searched">
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon-wrap"><span class="step-icon">🔍</span></div>
+        <h3>Busca</h3>
+        <p>Encuentra a tu compa por nombre o apellido</p>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap"><span class="step-icon">⭐</span></div>
+        <h3>Califica</h3>
+        <p>Deja tu puntuación y comentario honesto</p>
+      </div>
+      <div class="step">
+        <div class="step-icon-wrap"><span class="step-icon">🤝</span></div>
+        <h3>Conecta</h3>
+        <p>Elige mejor a tus compañeros de grupo</p>
+      </div>
+    </div>
+  </div>
+</div>
