@@ -1,1 +1,18 @@
 /.claude
+
+# Env — nunca subir credenciales
+backend/.env
+
+# Dependencias
+backend/node_modules/
+frontend/node_modules/
+
+# Build Angular
+frontend/dist/
+
+# Cache Angular
+frontend/.angular/
+
+# Logs
+*.log
+npm-debug.log*

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CompasService } from '../../core/services/compas.service';
+import { UNIVERSIDADES_PERU } from '../../shared/data/universidades-peru';
 
 @Component({
   selector: 'app-add-compa',
@@ -10,6 +11,8 @@ import { CompasService } from '../../core/services/compas.service';
 })
 export class AddCompaComponent {
   public router: Router;
+  readonly universidades = UNIVERSIDADES_PERU;
+
   form = this.fb.group({
     nombre:      ['', [Validators.required, Validators.maxLength(80)]],
     apellido:    ['', [Validators.required, Validators.maxLength(80)]],

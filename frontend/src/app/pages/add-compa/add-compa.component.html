@@ -9,6 +9,7 @@
     <div class="alert alert-error" *ngIf="error">{{ error }}</div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
+
       <div class="form-row">
         <div class="form-group">
           <label>Nombre <span class="required">*</span></label>
@@ -28,7 +29,10 @@
 
       <div class="form-group">
         <label>Universidad</label>
-        <input type="text" formControlName="universidad" placeholder="Ej: Universidad Nacional Mayor de San Marcos">
+        <select formControlName="universidad" class="select-univ">
+          <option value="">— Selecciona una universidad —</option>
+          <option *ngFor="let u of universidades" [value]="u">{{ u }}</option>
+        </select>
       </div>
 
       <div class="form-row">
@@ -44,13 +48,15 @@
 
       <div class="form-group">
         <label>Descripción (opcional)</label>
-        <textarea formControlName="descripcion" rows="3" placeholder="Describe brevemente a este compañero..."></textarea>
+        <textarea formControlName="descripcion" rows="3"
+          placeholder="Describe brevemente a este compañero..."></textarea>
         <span class="char-count">{{ (form.value.descripcion?.length ?? 0) }} / 300</span>
       </div>
 
       <button type="submit" class="btn btn-primary full" [disabled]="form.invalid || submitting">
         {{ submitting ? 'Guardando...' : 'Agregar compañero' }}
       </button>
+
     </form>
   </div>
 </div>
