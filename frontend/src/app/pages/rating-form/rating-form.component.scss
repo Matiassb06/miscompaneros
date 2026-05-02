@@ -30,3 +30,10 @@
   text-align: right;
   margin-top: .2rem;
 }
+
+@media (max-width: 480px) {
+  .stars-picker {
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+}

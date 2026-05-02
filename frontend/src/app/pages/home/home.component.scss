@@ -236,3 +236,24 @@
   h3 { font-size: 1rem; font-weight: 600; margin-bottom: .3rem; color: var(--primary); }
   p  { color: var(--text-secondary); font-size: .85rem; line-height: 1.5; }
 }
+
+@media (max-width: 400px) {
+  .tab-btn {
+    padding: .65rem 1rem;
+    font-size: .82rem;
+    letter-spacing: .02em;
+    flex: 1;
+  }
+
+  .tabs-bar {
+    width: 100%;
+  }
+
+  .hero {
+    padding: 1.75rem 1rem 0;
+  }
+
+  .steps {
+    gap: 1.25rem;
+  }
+}
