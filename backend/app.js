@@ -16,6 +16,16 @@ app.use('/api/compas',   compasRoutes);
 app.use('/api/resenas',  resenasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 
+app.get('/api/health', async (req, res) => {
+  const db = require('./config/db');
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected', env_db: !!process.env.DATABASE_URL });
+  } catch (e) {
+    res.status(500).json({ status: 'error', message: e.message, env_db: !!process.env.DATABASE_URL });
+  }
+});
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
