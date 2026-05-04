@@ -27,24 +27,50 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Universidad</label>
-        <select formControlName="universidad" class="select-univ">
-          <option value="">— Selecciona una universidad —</option>
-          <option *ngFor="let u of universidades" [value]="u">{{ u }}</option>
-        </select>
-      </div>
+        <div class="form-group autocomplete-container">
+            <label>Universidad</label>
+            <input type="text"
+                   formControlName="universidad"
+                   placeholder="Escribe para buscar universidad..."
+                   (focus)="form.value.universidad ? filtrarUniversidades(form.value.universidad) : null"
+                   (blur)="ocultarDropdown()"
+                   autocomplete="off">
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Carrera</label>
-          <input type="text" formControlName="carrera" placeholder="Ej: Ingeniería de Sistemas">
+            <ul class="autocomplete-list" *ngIf="showDropdown">
+                <li *ngFor="let u of filteredUniversidades" (mousedown)="seleccionarUniversidad(u)">
+                    {{ u }}
+                </li>
+            </ul>
         </div>
-        <div class="form-group">
-          <label>Ciclo</label>
-          <input type="text" formControlName="ciclo" placeholder="Ej: 3er ciclo">
+
+        <div class="form-row">
+            <!-- Reemplaza el form-group de carrera con este -->
+            <div class="form-group autocomplete-container">
+                <label>Carrera</label>
+                <input type="text"
+                       formControlName="carrera"
+                       placeholder="Ej: Ingeniería de Sistemas"
+                       (focus)="form.value.carrera ? filtrarCarreras(form.value.carrera) : null"
+                       (blur)="ocultarDropdownCarrera()"
+                       autocomplete="off">
+
+                <ul class="autocomplete-list" *ngIf="showDropdownCarrera">
+                    <li *ngFor="let c of filteredCarreras" (mousedown)="seleccionarCarrera(c)">
+                        {{ c }}
+                    </li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label>Ciclo</label>
+                <select formControlName="ciclo"
+                        class="form-select"
+                        [ngClass]="{'is-placeholder': form.get('ciclo')?.value === '' || form.get('ciclo')?.value === null}">
+                    <option value="" disabled selected>— Selecciona un ciclo —</option>
+                    <option *ngFor="let c of ciclos" [value]="c">{{ c }}</option>
+                </select>
+            </div>
         </div>
-      </div>
 
       <div class="form-group">
         <label>Descripción (opcional)</label>
